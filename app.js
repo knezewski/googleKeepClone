@@ -1,10 +1,10 @@
 class App {
   constructor() {
-    this.notes = [];
+    this.notes = JSON.parse(localStorage.getItem('notes')) || [];
     this.title = "";
     this.text = "";
     this.id = "";
-    
+
     this.$placeholder = document.querySelector("#placeholder");
     this.$form = document.querySelector("#form");
     this.$notes = document.querySelector("#notes");
@@ -17,7 +17,8 @@ class App {
     this.$modalText = document.querySelector(".modal-text");
     this.$modalCloseButton = document.querySelector(".modal-close-button");
     this.$colorTooltip = document.querySelector("#color-tooltip");
-    
+
+    this.render();
     this.addEventListeners();
   }
 
@@ -143,7 +144,7 @@ class App {
       id: this.notes.length > 0 ? this.notes[this.notes.length - 1].id + 1 : 1
     };
     this.notes = [...this.notes, newNote];
-    this.displayNotes();
+    this.render();
     this.closeForm();
   }
 
@@ -177,7 +178,16 @@ class App {
     if (!event.target.matches('.toolbar-delete')) return;
     const id = event.target.dataset.id;
     this.notes = this.notes.filter(note => note.id !== Number(id));
+    this.render();
+  }
+
+  render() {
+    this.saveNotes();
     this.displayNotes();
+  }
+
+  saveNotes() {
+    localStorage.setItem('notes', JSON.stringify(this.notes))
   }
 
   displayNotes() {
